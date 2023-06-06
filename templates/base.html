@@ -119,7 +119,8 @@
     </section>
     {% if not current_user.filledinfo and current_user.is_authenticated %}
     <script>
-      const settingsUrl = location;
+    console.log(window.location.href)
+      const settingsUrl = location.origin + "/settings";
       if (settingsUrl != window.location.href) {
         window.location.href = "/settings";
       }

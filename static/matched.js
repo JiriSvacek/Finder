@@ -1,6 +1,6 @@
 const header = document.getElementById("header"),
   footer = document.getElementById("footer"),
-  socket = io.connect("http://127.0.0.1:5000/");
+  socket = io.connect(location.origin + "/");
 
 var roomId;
 
