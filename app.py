@@ -10,8 +10,9 @@ from flask_login import LoginManager
 from flask_socketio import SocketIO, join_room, leave_room
 
 
-app = Flask(__name__, template_folder=r".\templates",
-            static_folder=r".\static")
+#app = Flask(__name__, template_folder=r".\templates",
+#            static_folder=r".\static")
+app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(app)
