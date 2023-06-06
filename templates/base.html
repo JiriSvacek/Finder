@@ -119,9 +119,9 @@
     </section>
     {% if not current_user.filledinfo and current_user.is_authenticated %}
     <script>
-      const settingsUrl = "http://127.0.0.1:5000/settings";
+      const settingsUrl = location.hostname + "/settings";
       if (settingsUrl != window.location.href) {
-        window.location.href = "http://127.0.0.1:5000/settings";
+        window.location.href = location.hostname + "/settings";
       }
     </script>
     {% if not session["gotLocation"] %}
