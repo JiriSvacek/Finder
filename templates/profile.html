@@ -1,0 +1,11 @@
+{% extends "base.html" %} {% block content %} {% if session['gotLocation'] %}
+<div id="user">
+</div>
+<script src="{{ url_for('static', filename='profile.js') }}"></script>
+{% else %}
+<div class="columns is-centered">
+  <div class="column is-3 is-centered">
+    <div class="notification is-danger">You have to allow location</div>
+  </div>
+</div>
+{% endif %} {% endblock %}

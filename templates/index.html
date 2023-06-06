@@ -1,0 +1,22 @@
+{% extends "base.html" %} {% block head %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static',filename='bulma-pageloader/dist/css/bulma-pageloader.min.css') }}"
+/>
+{% endblock %} {% block content %}
+<h1 class="title">Welcome on App</h1>
+<h2 class="subtitle">Find new people and chat with them.</h2>
+{% if current_user.is_authenticated %}
+<nav class="level">
+  <div class="level-item has-text-centered" id="war"></div>
+</nav>
+<div id="pageloader" class="pageloader">
+  <span class="title">Getting your location</span>
+</div>
+<script src="{{ url_for('static', filename='index.js') }}"></script>
+{% if not session['gotLocation'] %}
+<script>
+  getLocation();
+</script>
+{% endif %} {% endif %} {% endblock %}

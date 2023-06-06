@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="title">
+  {{ session["error"] }}
+</h3>
+<a href="http://127.0.0.1:5000/" class="button is-light">
+   Redirect to main page?
+</a>
+
+{% endblock %}

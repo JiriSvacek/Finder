@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Engeto Shop</title>
+    <link rel="shortcut icon" href="#">
+</head>
+<body>
+<style>
+body {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav article ads"
+    "nav footer footer";
+  grid-template-rows: 80px 1fr 70px;
+  grid-template-columns: 20% 1fr 15%;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  height: 100vh;
+  margin: 0;
+  }
+header, footer, article, nav, div {
+  padding: 1.2em;
+  background: gold;
+  }
+#pageHeader {
+  grid-area: header;
+  }
+#pageFooter {
+  grid-area: footer;
+  }
+#artMain {
+  grid-area: article;
+  }
+#artItemsLoad {
+  grid-area: article;
+  overflow: auto;
+  }
+#mainNav {
+  grid-area: nav;
+  }
+#siteAds {
+  grid-area: ads;
+  }
+
+/* Stack the layout on small devices/viewports. */
+@media all and (max-width: 900px) {
+  body {
+    grid-template-areas:
+      "header"
+      "article"
+      "article"
+      "ads"
+      "nav"
+      "footer";
+    grid-template-rows: 80px 1fr 70px 1fr 70px;
+    grid-template-columns: 1fr;
+ }
+}
+</style>
+
+<header id="pageHeader">Engeto Shop</header>
+<nav id="mainNav">Possibilities:
+    <div>
+        <a onclick="articleItemsLoad()">Items Load</a>
+    </div>
+    <div>
+        <a onclick="articleGetItem()">Get item by number</a>
+    </div>
+    <div>
+        <a onclick="articleNewItem()">Create new item</a>
+    </div>
+    <div>
+        <a onclick="articleUpdatePrice()">Update price</a>
+    </div>
+    <div>
+        <a onclick="articleDeleteItems()">Delete items</a>
+    </div>
+</nav>
+<article id="artMain">Main page
+    <div id="div1">Click on action in the navigation panel</div>
+</article>
+<article id="artItemsLoad">Load items from database
+    <input id="onstockLoad" type="checkbox" onclick="itemsLoad(sendRequest)">
+    <label for="onstockLoad">*Check to display only at stock</label>
+    <a id="loadMsg"></a>
+</article>
+<article id="artNewItem">Insert data for new Item
+    <table>
+        <tr>
+            <th><label for="partNb">Part number:</label></th>
+            <th><input type="text" id="partNb" name="partNumber"></th>
+        </tr>
+        <tr>
+            <th><label for="name">Name:</label></th>
+            <th><input type="text" id="name" name="name"></th>
+        </tr>
+        <tr>
+            <th><label for="description">Description:</label></th>
+            <th><textarea id="description" rows="1" cols="50"></textarea></th>
+        </tr>
+        <tr>
+            <th><label for="price">Price:</label></th>
+            <th><input type="text" id="price" name="price"></th>
+        </tr>
+        <tr>
+            <th><label for="onstockNew">For sale:</label></th>
+            <th><input id="onstockNew" type="checkbox"></th>
+        </tr>
+        <tr>
+            <th></th>
+            <th><button id="load-button" onclick="newItem()">INSERT</button></th>
+        </tr>
+        <tr>
+            <th></th>
+            <th><label id="popUp">Item was added to DB</label></th>
+        </tr>
+    </table>
+</article>
+<article id="artGetItem">Load item by part number from database:
+    <input type="text" id="idPart" name="name">
+    <button id="get-button" onclick="getItem()">GET</button>
+    <table id="tableGet">
+        <tr>
+            <th><label for="pId">Part Id:</label></th>
+            <th><p id="pId"></th>
+        </tr>
+        <tr>
+            <th><label for="pNumber">Part number:</label></th>
+            <th><p id="pNumber"></th>
+        </tr>
+        <tr>
+            <th><label for="pName">Name:</label></th>
+            <th><p id="pName"></th>
+        </tr>
+        <tr>
+            <th><label for="pDescription">Description:</label></th>
+            <th><p id="pDescription"></th>
+        </tr>
+        <tr>
+            <th><label for="pPrice">Price:</label></th>
+            <th><p id="pPrice"></th>
+        </tr>
+        <tr>
+            <th><label for="onstockGet">For sale:</label></th>
+            <th><input id="onstockGet" type="checkbox" onclick="this.checked=!this.checked;" /></th>
+        </tr>
+    </table>
+    <p id="nOkGet">Item nof found</p>
+</article>
+<article id="artUpdatePrice">Update price of item by id
+    <br>
+    <label for="idPartPrice">Part id: </label>
+    <input type="text" id="idPartPrice">
+    <label for="pricePart">Price: </label>
+    <input type="text" id="pricePart">
+    <button id="update-button" onclick="updatePrice()">UPDATE</button>
+    <br>
+    <p id="pricePopUp"></p>
+</article>
+<article id="artDeleteItems">Delete items:
+    <br>
+    <button id="delete-button" onclick="deleteItems()">DELETE</button><br>
+    <p id="deleteItemsPopUp"></p>
+</article>
+<div id="siteAds">Some ads</div>
+<footer id="footer">
+    <span id="span"></span>
+</footer>
+<script>
+const artGetItem = document.getElementById("artGetItem"),
+    artItemsLoad = document.getElementById("artItemsLoad"),
+    artNewItem = document.getElementById("artNewItem"),
+    artUpdatePrice = document.getElementById("artUpdatePrice"),
+    artDeleteItems = document.getElementById("artDeleteItems"),
+    artMain = document.getElementById("artMain"),
+    TJSON = "TJSON",
+    TTEXT = "TTEXT";
+
+
+function hide() {
+    artGetItem.style.display = "none";
+    artItemsLoad.style.display = "none";
+    artNewItem.style.display = "none";
+    artUpdatePrice.style.display = "none";
+    artDeleteItems.style.display = "none";
+    artMain.style.display = "none";
+}
+
+function load() {
+    hide();
+    artMain.style.display = "block";
+}
+load()
+
+function sendRequest(adress, requestOptions, returnFormat) {
+    return fetch("http://localhost:5000/" + adress, requestOptions)
+        .then(response => {
+            if (returnFormat == "TJSON") {
+                return response.json();
+            } else {
+                return response.text();
+            }
+            console.log(response);
+        })
+        .then(result => {
+            console.log(result);
+            return result;
+        }).catch(error => console.log('error', error));
+};
+
+function articleItemsLoad() {
+    hide();
+    artItemsLoad.style.display = "block";
+    itemsLoad(sendRequest);
+}
+
+async function itemsLoad() {
+
+    const onstockLoad = document.getElementById("onstockLoad");
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'available': onstockLoad.checked },
+        redirect: 'follow'
+    };
+
+    const result = await sendRequest("itemsLoad", requestOptions, TJSON);
+
+    if (document.getElementById("loadTable")) {
+        artItemsLoad.removeChild(document.getElementById("loadTable"));
+    }
+
+    const table = document.createElement('table');
+    table.setAttribute('id', 'loadTable');
+    row = table.insertRow(0);
+    const arrayOfProperties = ["Id", "Part Number", "Name", "Price", "For sale", "Description"];
+    arrayOfProperties.forEach(function (item, index) {
+        row.insertCell(index).innerHTML = item;
+    });
+
+    result.forEach((e) => {
+                row = table.insertRow(1);
+                row.insertCell(0).innerHTML = e?.id;
+                row.insertCell(1).innerHTML = e?.partNumber;
+                row.insertCell(2).innerHTML = e?.name;
+                row.insertCell(3).innerHTML = e?.price;
+                row.insertCell(4).innerHTML = e?.forSale;
+                row.insertCell(5).innerHTML = e?.description;
+            })
+    artItemsLoad.appendChild(table);
+}
+
+const tableGet = document.getElementById("tableGet"),
+    nOkGet = document.getElementById("nOkGet"),
+    idPart = document.getElementById("idPart");
+
+function articleGetItem() {
+    hide();
+    tableGet.style.display = "none";
+    nOkGet.style.display = "none";
+    artGetItem.style.display = "block";
+}
+
+function closeChildsGetItem() {
+    nOkGet.style.display = "none";
+    idPart.value = "";
+}
+
+async function getItem() {
+
+    var requestOptions = {
+        method: 'GET',
+        redirect: 'follow'
+    };
+    let result = await sendRequest("loadItem/" + idPart.value, requestOptions, TTEXT);
+    if (result.length != 0) {
+        result = JSON.parse(result);
+    }
+    if (result.hasOwnProperty('message')) {
+        nOkGet.innerHTML = result["message"];
+        tableGet.style.display = "none";
+        nOkGet.style.display = "block";
+        setTimeout(closeChildsGetItem, 3000);
+    } else if (result.hasOwnProperty('error')) {
+        nOkGet.innerHTML = result["status"] + " " + result["error"];
+        tableGet.style.display = "none";
+        nOkGet.style.display = "block";
+        setTimeout(closeChildsGetItem, 3000);
+    } else if (result == 0) {
+        nOkGet.innerHTML = "Selected id does not have assignment item in DB";
+        tableGet.style.display = "none";
+        nOkGet.style.display = "block";
+        setTimeout(closeChildsGetItem, 2000);
+    } else {
+        document.getElementById("pId").innerHTML = result.id;
+        document.getElementById("pNumber").innerHTML = result.partNumber;
+        document.getElementById("pName").innerHTML = result.name;
+        document.getElementById("pDescription").innerHTML = result.description;
+        document.getElementById("pPrice").innerHTML = result.price;
+        document.getElementById("onstockGet").checked = result.forSale;
+        nOkGet.style.display = "none";
+        tableGet.style.display = "block";
+    }
+}
+
+const popUp = document.getElementById("popUp"),
+    partNb = document.getElementById("partNb"),
+    name = document.getElementById("name"),
+    description = document.getElementById("description"),
+    price = document.getElementById("price"),
+    onstockNew = document.getElementById("onstockNew");
+
+function articleNewItem() {
+    hide();
+    popUp.style.display = "none";
+    artNewItem.style.display = "block";
+}
+
+async function newItem() {
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+        "partNumber": partNb.value,
+        "name": name.value,
+        "description": description.value,
+        "price": price.value,
+        "forSale": onstockNew.checked
+    });
+
+    var requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    const result = await sendRequest("newItem", requestOptions, TJSON);
+    afterSendNewItem(result);
+}
+
+function afterSendNewItem(result) {
+    if (result.hasOwnProperty('message')) {
+        popUp.innerHTML = result["message"];
+        popUp.style.display = "block";
+        setTimeout(function () { popUp.style.display = "none";}, 3000);
+    } else {
+        popUp.innerHTML = "Item was added to DB";
+        popUp.style.display = "block";
+        setTimeout(closeAfterNewItem, 2000);
+    }
+}
+
+function closeAfterNewItem() {
+    partNb.value = "";
+    name.value = "";
+    description.value = "";
+    price.value = "";
+    onstockNew.checked = false;
+    popUp.style.display = "none";
+}
+
+const pricePopUp = document.getElementById("pricePopUp"),
+    idPartPrice = document.getElementById("idPartPrice"),
+    pricePart = document.getElementById("pricePart");
+
+function articleUpdatePrice() {
+    hide();
+    pricePopUp.style.display = "none";
+    idPartPrice.value = "";
+    pricePart.value = "";
+    artUpdatePrice.style.display = "block";
+}
+
+async function updatePrice() {
+    var requestOptions = {
+        method: 'PUT',
+        headers: {
+            'id': idPartPrice.value,
+            "price": pricePart.value
+        },
+        redirect: 'follow'
+    };
+
+    const result = await sendRequest("updatePrice", requestOptions, TTEXT);
+
+    if (result.includes('message')) {
+        afterUpdate(JSON.parse(result)["message"]);
+    } else if (result == "0") {
+        afterUpdate("No item was effected (wrong id?)");
+    } else {
+        afterUpdate("Update was successful");
+    }
+}
+
+function afterUpdate(result) {
+    pricePopUp.innerHTML = result;
+    pricePopUp.style.display = "block";
+    setTimeout(function () {
+        idPartPrice.value = "";
+        pricePart.value = "";
+        pricePopUp.style.display = "none";
+    }, 2500);
+}
+
+const deleteItemsPopUp = document.getElementById("deleteItemsPopUp");
+
+function articleDeleteItems() {
+    hide();
+    deleteItemsPopUp.style.display = "none"
+    artDeleteItems.style.display = "block";
+}
+
+function deleteItems() {
+    if (confirm('Are you sure you want to delete out of stock items from DB?')) {
+        deleteRequest();
+    } else {
+        deletePopUp("No action was done (you cancelled action)");
+    }
+}
+
+async function deleteRequest() {
+    var requestOptions = {
+        method: 'DELETE',
+        redirect: 'follow'
+    };
+
+    const result = await sendRequest("delete", requestOptions, TTEXT);
+            if (result.includes('message')) {
+                deletePopUp(JSON.parse(result)["message"]);
+            } else {
+                if (result == "0") {
+                    deletePopUp("No row effected");
+                } else if (result == "1") {
+                    deletePopUp(result + " row was deleted");
+                } else {
+                    deletePopUp(result + " rows was deleted");
+                }
+            };
+}
+
+function deletePopUp(result) {
+    deleteItemsPopUp.innerHTML = result;
+    deleteItemsPopUp.style.display = "block";
+    setTimeout(function () {deleteItemsPopUp.style.display = "none";}, 2500);
+}
+
+const span = document.getElementById('span');
+
+function timer() {
+    const d = new Date();
+
+    const month = addingZero(d.getMonth() + 1),
+        day = addingZero(d.getDate()),
+        hour = addingZero(d.getHours()),
+        minute = addingZero(d.getMinutes()),
+        second = addingZero(d.getSeconds());
+
+    span.innerHTML = day + "."
+        + month + "."
+        + d.getFullYear() + " "
+        + " " + hour + ":"
+        + minute + ":"
+        + second;
+}
+
+function addingZero(inputValue) {
+    if (inputValue < 10) {
+        return "0" + inputValue;
+    } else {
+        return inputValue;
+    }
+}
+
+timer()
+setInterval(timer, 1000);
+</script>
+</body>
+</html>
+

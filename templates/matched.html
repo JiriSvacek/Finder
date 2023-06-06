@@ -1,0 +1,55 @@
+{% extends "base.html" %} {% block head %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static',filename='matched.css') }}"
+/>
+{% endblock %} {% block content %}{% if not session['matched'] == None %}
+<div id="container-other">
+  <aside id="aside" class="has-background-white">
+    <header>
+      <h2 class="is-size-4">Chats</h2>
+    </header>
+    <ul>
+      {% for user in session['matched'] %}
+      <li id="{{ user.key }}" onclick="showChat({{ user.key }})">
+        {% if "not a valid image url from internet" == user.images or
+        user.images == None %}
+        <img src="static/basePhotoWP.jpg" />
+        {% else %}
+        <img id="profilePhoto" src="{{ user.images }}" onerror="standby()" />
+        {% endif %}
+        <div class="is-size-5">
+          <div>{{ user.name }}</div>
+          <h3>
+            {% if user.from_user == current_user.get_id() %} ME: {{ user.body }}
+            {% elif user.to_user == current_user.get_id() %} OTHER: {{ user.body
+            }} {% endif %}
+          </h3>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+  <main>
+    <header id="header"></header>
+    <ul id="chat"></ul>
+    <footer id="footer"></footer>
+  </main>
+</div>
+<script>
+  const currentUser = {{ current_user.get_id() }};
+</script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+  integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+  crossorigin="anonymous"
+></script>
+<script src="{{ url_for('static', filename='matched.js') }}"></script>
+{% else %}
+<div class="columns is-centered">
+  <div class="column is-3 is-centered">
+    <div class="notification is-danger">You have no Matches</div>
+  </div>
+</div>
+{% endif %} {% endblock %}

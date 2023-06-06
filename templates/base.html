@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Finder</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css"
+    />
+    <script src="{{url_for('static', filename='base.js')}}"></script>
+    {% block head %} {% endblock %}
+  </head>
+
+  <body>
+    <style>
+      .is-horizontal-center {
+        justify-content: center;
+      }
+      html {
+        overflow-y: hidden;
+      }
+      .hero-body {
+        max-height: 1px;
+      }
+    </style>
+    <section class="hero is-primary is-fullheight" id="app">
+      <div class="hero-head">
+        <nav class="navbar">
+          <div class="container">
+            <div id="navbarMenuHeroA" class="navbar-menu">
+              <div class="navbar-start">
+                {% if current_user.is_authenticated %} {% if "not a valid image
+                url from internet" == current_user.images or current_user.images
+                == None %}
+                <figure class="navbar-item image">
+                  <img class="is-rounded" src="static/basePhotoWP.jpg" />
+                </figure>
+                {% else %}
+                <figure class="navbar-item image">
+                  <img
+                    id="profilePhoto"
+                    class="is-rounded"
+                    src="{{
+                        current_user.images }}"
+                    onerror="standby()"
+                  />
+                </figure>
+                {% endif %}
+                <a
+                  href="{{ url_for('main.index') }}"
+                  class="navbar-item has-text-white"
+                >
+                  {{ current_user.name }}
+                </a>
+                {% endif %}
+              </div>
+              <div class="navbar-end">
+                {% if current_user.is_authenticated %}
+                <a
+                  href="{{ url_for('matched.matched_page') }}"
+                  class="navbar-item"
+                >
+                  Matched
+                </a>
+                <a
+                  {%
+                  if
+                  current_user.location
+                  %}
+                  href="{{ url_for('profile.profiles_page') }}"
+                  {%
+                  endif
+                  %}
+                  class="navbar-item"
+                >
+                  Profile
+                </a>
+                <a href="{{ url_for('main.settings') }}" class="navbar-item">
+                  Setting
+                </a>
+                {% endif %} {% if not current_user.is_authenticated %}
+                <a href="{{ url_for('main.index') }}" class="navbar-item">
+                  Home
+                </a>
+                <a href="{{ url_for('auth.login') }}" class="navbar-item">
+                  Login
+                </a>
+                <a href="{{ url_for('auth.signup') }}" class="navbar-item">
+                  Sign Up
+                </a>
+                {% endif %} {% if current_user.is_authenticated %}
+                <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+                  Logout
+                </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="hero-body">
+        <div class="container has-text-centered">
+          {% block content %} {% endblock %}
+        </div>
+      </div>
+      <div class="hero-foot">
+        <div class="columns">
+          <div class="column is-one-third"></div>
+          <div class="column is-one-third has-text-centered">
+            <p class="marg"><strong>@</strong>powered<strong> by Me</strong></p>
+          </div>
+          <div class="column is-one-third has-text-centered">
+            <p class="marg" id="time"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+    {% if not current_user.filledinfo and current_user.is_authenticated %}
+    <script>
+      const settingsUrl = "http://127.0.0.1:5000/settings";
+      if (settingsUrl != window.location.href) {
+        window.location.href = "http://127.0.0.1:5000/settings";
+      }
+    </script>
+    {% if not session["gotLocation"] %}
+    <script>
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            log_it,
+            console.log("No location")
+          );
+        } else {
+          console.log("No location");
+        }
+      }
+
+      function log_it(position) {
+        let data = {
+          lat: position.coords.latitude,
+          long: position.coords.longitude,
+        };
+        fetch("/cords", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }).catch(function (e) {
+          console.log(e);
+        });
+      }
+      getLocation();
+    </script>
+    {% endif %} {% endif %} {% block javascripts_local %} {% endblock %}
+  </body>
+</html>

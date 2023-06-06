@@ -1,0 +1,152 @@
+{% extends "base.html" %} {% block head %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static',filename='bulma-calendar/dist/css/bulma-calendar.min.css') }}"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static',filename='bulma-slider/dist/css/bulma-slider.min.css') }}"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static',filename='bulma-switch/dist/css/bulma-switch.min.css') }}"
+/>
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static',filename='bulma-checkradio/dist/css/bulma-checkradio.min.css') }}"
+/>
+<style>
+  .switch[type="checkbox"] {
+    background-color: turquoise !important;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="column is-4 is-offset-4">
+  <h4 class="title">Settings</h4>
+  <div class="box">
+    <div id="errorMessage">
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <div class="notification is-danger">
+        {% for message in messages %} {{ message }}<br />
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+    </div>
+    <div class="field">
+      <div class="control">
+        <label>
+          Set your birthday
+          <input type="date" id="calendar" name="calendar" />
+        </label>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <label>Choose your gender:</label>
+      </div>
+      <label for="switchGender">Men</label>
+      <input
+        id="switchGender"
+        type="checkbox"
+        name="switchGender"
+        class="switch"
+        checked="checked"
+      />
+      <label for="switchGender">Women</label>
+    </div>
+    <div class="control">
+      <label>Choose gender you are interested:</label>
+    </div>
+    <div class="field">
+      <input
+        class="is-checkradio"
+        id="manCheckbox"
+        type="checkbox"
+        name="manCheckbox"
+      />
+      <label for="manCheckbox">Man</label>
+      <input
+        class="is-checkradio"
+        id="womanCheckbox"
+        type="checkbox"
+        name="womanCheckbox"
+      />
+      <label for="womanCheckbox">Woman</label>
+    </div>
+    <div class="field">
+      <div class="control">
+        <label>Limit for lower age:</label>
+        <input
+          id="lowerAgeLimit"
+          class="slider is-fullwidth is-primary has-output"
+          step="1"
+          min="18"
+          max="100"
+          value="20"
+          type="range"
+        />
+        <output for="lowerAgeLimit" id="outputLowerAgeLimit"></output>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <label>Limit for upper age:</label>
+        <input
+          id="upperAgeLimit"
+          class="slider is-fullwidth is-primary has-output"
+          step="1"
+          min="18"
+          max="100"
+          value="20"
+          type="range"
+        />
+        <output for="upperAgeLimit" id="outputUpperAgeLimit"></output>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <label>Maximal distance in km:</label>
+        <input
+          id="range"
+          class="slider is-fullwidth is-primary has-output"
+          step="1"
+          min="1"
+          max="250"
+          value="10"
+          type="range"
+        />
+        <output for="range" id="outputRange"></output>
+      </div>
+    </div>
+    <div class="field">
+      <div class="control">
+        <input class="input" id="picture" name="image" placeholder="Image" />
+      </div>
+    </div>
+    <button
+      class="button is-block is-info is-large is-fullwidth"
+      onclick="sendSettings()"
+    >
+      Confirm
+    </button>
+  </div>
+</div>
+{% endblock %} {% block javascripts_local %}
+<script>
+  const user = {{data|tojson}};
+</script>
+<script
+  type="text/javascript"
+  src="{{url_for('static', filename='bulma-calendar/dist/js/bulma-calendar.min.js')}}"
+></script>
+<script
+  type="text/javascript"
+  src="{{url_for('static', filename='bulma-slider/dist/js/bulma-slider.min.js')}}"
+></script>
+<script src="{{ url_for('static', filename='settings.js') }}"></script>
+
+{% endblock %}

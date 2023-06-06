@@ -1,0 +1,134 @@
+<style>
+  .media:hover {
+    background-color: #d8d2d2;
+  }
+  .main {
+    height: 85vh;
+  }
+  .scrolable {
+    height: 100%;
+    overflow-y: auto;
+  }
+  .elem {
+    max-height: 10vh;
+    min-height: 5vh;
+    padding: 5px 20px 5px 20px;
+    margin-bottom: 0.25rem !important;
+    margin: 0 auto;
+  }
+  .elem:hover {
+    opacity: 60%;
+  }
+
+  .pic {
+    width: fit-content;
+    height: fit-content;
+  }
+</style>
+<div class="columns box main">
+  <div class="column is-one-quarter scrolable">
+    <!--{% for user in session['matched'] %}
+      <div class="block">
+        <div class="columns notification is-primary">
+          <figure class="column image">
+            {% if "not a valid image url from internet" == user.images or
+            user.images == None %}
+            <img class="is-16x16" src="static/basePhotoWP.jpg" />
+            {% else %}
+            <script>
+              function standby() {
+                document.getElementById("profilePhoto").src =
+                  "static/basePhotoWP.jpg";
+              }
+            </script>
+            <img
+              class="is-16x16"
+              id="profilePhoto"
+              src="{{ user.images }}"
+              onerror="standby()"
+            />
+            {% endif %}
+          </figure>
+          <h4 class="column">{{ user.name }}</h4>
+        </div>
+      </div>
+      {% endfor %}
+      {% for user in session['matched'] %}
+      <article class="media has-background-primary elem">
+        <figure class="media-left">
+          {% if "not a valid image url from internet" == user.images or
+          user.images == None %}
+            <p class="image pic">
+              <img class="is-rounded" src="static/basePhotoWP.jpg" />
+            </p>
+          </figure>
+          {% else %}
+          <script>
+            function standby() {
+              document.getElementById("profilePhoto").src =
+                "static/basePhotoWP.jpg";
+            }
+          </script>
+          <p class="image pic">
+            <img
+              id="profilePhoto"
+              class="is-rounded"
+              src="{{ user.images }}"
+              onerror="standby()"
+            />
+          </p>
+          </figure>
+          {% endif %}
+        </figure>
+        <div class="media-content">
+          <div class="content">
+            <br>
+            <h4>{{ user.name }}</h4>
+          </div>
+        </div>
+      </article>
+      {% endfor %}-->
+    {% for user in session['matched'] %}
+    <div class="box elem notification is-primary">
+      <div class="columns is-0">
+        <figure class="column image is-3">
+          {% if "not a valid image url from internet" == user.images or
+          user.images == None %}
+          <img class="is-rounded pic" src="static/basePhotoWP.jpg" />
+          {% else %}
+          <script>
+            function standby() {
+              document.getElementById("profilePhoto").src =
+                "static/basePhotoWP.jpg";
+            }
+          </script>
+          <img
+            class="is-rounded pic"
+            id="profilePhoto"
+            src="{{ user.images }}"
+            onerror="standby()"
+          />
+          {% endif %}
+        </figure>
+        <h4 class="column has-text-left is-size-3">{{ user.name }}</h4>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="column box has-background-primary">
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>
+          <strong>Bulma</strong> by
+          <a href="https://jgthms.com">Jeremy Thomas</a>. The source code is
+          licensed
+          <a href="http://opensource.org/licenses/mit-license.php">MIT</a>. The
+          website content is licensed
+          <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/"
+            >CC BY NC SA 4.0</a
+          >.
+        </p>
+      </div>
+    </footer>
+  </div>
+</div>
