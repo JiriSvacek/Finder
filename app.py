@@ -1,16 +1,13 @@
-from flask import Flask, render_template, request, jsonify, json, redirect, url_for, session
-from flask_cors import CORS, cross_origin
-from markupsafe import escape
+from flask import Flask
+from flask_cors import CORS
 from models import db, User
-from datetime import datetime as date
-from passlib.hash import sha256_crypt
 from auth import auth as auth_blueprint
 from main import main as main_blueprint
 from err import err as err_blueprint
 from matched import matched as matched_blueprint, safe_message
 from profile import profile as profile_blueprint
-from flask_login import LoginManager, current_user
-from flask_socketio import SocketIO, join_room, emit, leave_room
+from flask_login import LoginManager
+from flask_socketio import SocketIO, join_room, leave_room
 
 
 app = Flask(__name__, template_folder=r".\templates",
