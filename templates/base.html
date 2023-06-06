@@ -119,9 +119,9 @@
     </section>
     {% if not current_user.filledinfo and current_user.is_authenticated %}
     <script>
-      const settingsUrl = location.hostname + "/settings";
+      const settingsUrl = location;
       if (settingsUrl != window.location.href) {
-        window.location.href = location.hostname + "/settings";
+        window.location.href = "/settings";
       }
     </script>
     {% if not session["gotLocation"] %}
