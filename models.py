@@ -173,7 +173,7 @@ class DB(UserMixin):
         return return_data
 
     @check_connection
-    def get_matched(self, key: int) -> list[dict[str, str | int | Any]] or None:
+    def get_matched(self, key: int) -> list[User] or None:
         """Returns matched users"""
         matched_keys = self._select_lists(key, DB.MATCHED)
         if not matched_keys:
@@ -188,7 +188,7 @@ class DB(UserMixin):
                         gender: str,
                         lowerAgeLimit: int, upperAgeLimit: int, birthday: str) -> list[dict]:
         """Returns Users available in specified range around user, age and gender interest and not already accepted,
-        declined, matched """
+        declined, matched tables."""
         keys_not_to_show = list()
         for table in (DB.ACCEPTED, DB.DECLINED, DB.MATCHED):
             keys_not_to_show += self._select_lists(key, table)
@@ -231,33 +231,33 @@ class DB(UserMixin):
 
     @check_connection
     def check_in_accepted(self, user_key: int, checking_key: int) -> int:
-        """Checks if user key is in accepted column in checking key row. Should return 1 if key is found, otherwise 0"""
+        """Checks if user keys are in accepted table. Should return 1 if key is found, otherwise 0"""
         select = f"SELECT * FROM {DB.ACCEPTED} WHERE `key1` = %s AND key2 = %s"
         return self._execute_fetchall(select, (user_key, checking_key))[0]
 
     @check_connection
     def add_to_declined(self, user_key: int, declined_key: int) -> int:
-        """Adds declined key to the declined column at user key row. Return 1 if addition was successful"""
+        """Adds declined keys to the declined table. Return 1 if addition was successful"""
         return self._add_to(DB.DECLINED, (user_key, declined_key))
 
     @check_connection
     def add_to_accepted(self, user_key: int, accepted_key: int) -> int:
-        """Adds accepted key to the accepted column at user key row. Return 1 if addition was successful"""
+        """Adds accepted keys to the accepted table. Return 1 if addition was successful"""
         return self._add_to(DB.ACCEPTED, (user_key, accepted_key))
 
     @check_connection
     def add_to_matched(self, user_key: int, matched_key: int) -> int:
-        """Adds matched key to the matched column at user key row. Return 1 if addition was successful"""
+        """Adds matched key to the matched table. Return 1 if addition was successful"""
         return self._add_to(DB.MATCHED, (user_key, matched_key))
 
     def _select_lists(self, key: int, table: str) -> list[int]:
-        """Return tuple of numbers from table that are in same row with key """
+        """Return list of numbers from table that are in same row with key """
         select = f"SELECT key2 FROM {table} WHERE `key1` = %s;"
         data = self._execute_fetchall(select, (key,))[1]
         return [x[0] for x in data]
 
     def _add_to(self, table: str, values: tuple) -> int:
-        """Add to the column specified number in specified row. Return int of affected rows"""
+        """Add to the table specified keys. Return int of affected rows"""
         update = f"INSERT INTO {table} (`key1`, key2) VALUES (%s, %s);"
         return self._execute_commit(update, values)
 
