@@ -102,9 +102,9 @@ class Message:
 
 class DB(UserMixin):
     SELECT_USER = "SELECT `key`, email, `name`, `password`, filledInfo, birthday, gender, interested, agelower, " \
-                  "ageupper, ST_AsText(location), images, `range` FROM py WHERE"
+                  "ageupper, ST_AsText(location), images, `range` FROM people WHERE"
     SELECT_CHAT = "SELECT * FROM chat WHERE"
-    UPDATE_USER = "UPDATE py SET"
+    UPDATE_USER = "UPDATE people SET"
     MATCHED = "matched"
     ACCEPTED = "accepted"
     DECLINED = "declined"
@@ -123,7 +123,7 @@ class DB(UserMixin):
     @check_connection
     def insert_user(self, email: str, name: str, password: str) -> int:
         """Inserts new User to the DB with basic info. Returns number of effected rows"""
-        add = "INSERT INTO py (email, name, password, interested) VALUES (%s, %s, %s, JSON_ARRAY())"
+        add = "INSERT INTO people (email, name, password, interested) VALUES (%s, %s, %s, JSON_ARRAY())"
         data = (email, name, password)
         return self._execute_commit(add, data)
 
@@ -180,7 +180,7 @@ class DB(UserMixin):
             return None
         format_strings = ','.join(['%s'] * len(matched_keys))
         select = f"{DB.SELECT_USER} `key` IN ({format_strings});"
-        _, data = self._execute_fetchall(select, (*matched_keys,))
+        data = self._execute_fetchall(select, (*matched_keys,))[1]
         return [User(*user).get_message_info() for user in data]
 
     @check_connection
@@ -193,7 +193,6 @@ class DB(UserMixin):
         for table in (DB.ACCEPTED, DB.DECLINED, DB.MATCHED):
             keys_not_to_show += self._select_lists(key, table)
         keys_not_to_show.append(key)
-        print(keys_not_to_show)
         string_in_recognized_list = ','.join(['%s'] * len(keys_not_to_show))
         strings_interested_list = ','.join(['%s'] * len(interested))
         select = f"{DB.SELECT_USER} (ST_Distance_Sphere(`location`, point(%s, %s)) *.001) <= %s AND filledInfo AND " \
@@ -203,7 +202,7 @@ class DB(UserMixin):
                  f"%s); "
         variables = (longitude, latitude, range, *interested, *keys_not_to_show, lowerAgeLimit,
                      upperAgeLimit, birthday, gender)
-        _, data = self._execute_fetchall(select, variables)
+        data = self._execute_fetchall(select, variables)[1]
         return [User(*user).__dict__ for user in data]
 
     @check_connection
