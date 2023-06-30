@@ -72,8 +72,8 @@ def action_swipe():
         declined. """
     curr = session["user"]["key"]
     other = session["availableUserKey"]
-    if db.check_in_accepted(curr, other):
-        remove = db.remove_from_accepted(curr, other)
+    if db.check_in_accepted(other, curr):
+        remove = db.remove_from_accepted(other, curr)
     else:
         remove = 1
     match_c = db.add_to_declined(curr, other)
@@ -83,7 +83,7 @@ def action_swipe():
 
 def match_users(current_user_id: int, matched_user_id: int):
     """Moves user key from other user´s accepted to matched. And put other user´s key to the matched field of user """
-    remove = db.remove_from_accepted(current_user_id, matched_user_id)
+    remove = db.remove_from_accepted(matched_user_id, current_user_id)
     match_c = db.add_to_matched(current_user_id, matched_user_id)
     match_m = db.add_to_matched(matched_user_id, current_user_id)
     return try_db_response(remove, match_c, match_m)
@@ -96,7 +96,7 @@ def action_match():
     accepted. """
     curr = session["user"]["key"]
     other = session["availableUserKey"]
-    if db.check_in_accepted(curr, other):
+    if db.check_in_accepted(other, curr):
         response = match_users(curr, other)
     else:
         response = try_db_response(db.add_to_accepted(curr, other))
