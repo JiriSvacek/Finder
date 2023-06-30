@@ -50,7 +50,14 @@
                 </figure>
                 {% endif %}
                 <a
+                        {%
+                  if
+                  current_user.filledinfo
+                  %}
                   href="{{ url_for('main.index') }}"
+                  {%
+                  endif
+                  %}
                   class="navbar-item has-text-white"
                 >
                   {{ current_user.name }}
@@ -59,8 +66,14 @@
               </div>
               <div class="navbar-end">
                 {% if current_user.is_authenticated %}
-                <a
+                <a {%
+                  if
+                  current_user.filledinfo
+                  %}
                   href="{{ url_for('matched.matched_page') }}"
+                {%
+                  endif
+                  %}
                   class="navbar-item"
                 >
                   Matched
@@ -68,7 +81,7 @@
                 <a
                   {%
                   if
-                  current_user.location
+                  current_user.filledinfo
                   %}
                   href="{{ url_for('profile.profiles_page') }}"
                   {%
@@ -78,7 +91,18 @@
                 >
                   Profile
                 </a>
-                <a href="{{ url_for('main.settings') }}" class="navbar-item">
+
+                <a
+                        {%
+                  if
+                  current_user.filledinfo
+                  %}
+                        href="{{ url_for('main.settings') }}"
+                        {%
+                  endif
+                  %}
+                        class="navbar-item">
+
                   Setting
                 </a>
                 {% endif %} {% if not current_user.is_authenticated %}
