@@ -9,13 +9,13 @@ from profile import profile as profile_blueprint
 from flask_login import LoginManager
 from flask_socketio import SocketIO, join_room, leave_room
 
-
-#app = Flask(__name__, template_folder=r".\templates",
+# app = Flask(__name__, template_folder=r".\templates",
 #            static_folder=r".\static")
 app = Flask(__name__)
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(app)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -24,15 +24,17 @@ def load_user(user_id):
         return user
     return None
 
+
 app.config['SECRET_KEY'] = 'secret-key-goes-here'
 app.register_blueprint(auth_blueprint)
 app.register_blueprint(main_blueprint)
 app.register_blueprint(matched_blueprint)
 app.register_blueprint(profile_blueprint)
 app.register_blueprint(err_blueprint)
-socket = SocketIO(app)
+socket = SocketIO(app, allow_upgrades=False)
 
 CORS(app)
+
 
 @socket.on("create")
 def begin_chat(room):
@@ -47,6 +49,7 @@ def stop_chat(room):
 @socket.on("message")
 def handle_message(message_data):
     safe_message(message_data)
+
 
 if __name__ == '__main__':
     socket.run(app, debug=True)
