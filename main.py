@@ -23,11 +23,9 @@ def sendRequest(url: str) -> bool or Exception:
     extension = ["jpg", "jpeg", "png", "gif"]
     try:
         if "http" in url or "https" in url and any(ex in url for ex in extension):
-            page = requests.get(url, stream=True, timeout=1, headers={
-                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/51.0.2704.103 Safari/537.36"})
+            page = requests.get(url)
     except Exception as e:
-        return [e]
+        return False
     else:
         if "page" in locals() and page.status_code == 200:
             return page
@@ -43,8 +41,6 @@ def post_advance_info(request_values):
     if not verification:
         request_values[-2] = "not a valid image url from internet"
         flash("Picture has not valid url!")
-    elif isinstance(verification, list):
-        request_values[-2] = "not a valid image url from internet"
     # Load new data to DB and return response
     return flash_string, db.profile_info(request_values, session["user"]["key"])
 
