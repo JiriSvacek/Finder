@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, flash, redirect, url_for, session, json, Response
+from flask import Blueprint, render_template, request, flash, redirect, url_for, session, Response
 from flask_login import login_required, current_user, login_user
 from datetime import datetime
 from models import db
@@ -24,7 +24,7 @@ def sendRequest(url: str) -> bool or Exception:
     try:
         if "http" in url or "https" in url and any(ex in url for ex in extension):
             page = requests.get(url)
-    except Exception as e:
+    except Exception:
         return False
     else:
         if "page" in locals() and page.status_code == 200:
