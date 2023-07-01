@@ -124,7 +124,7 @@ print(list(al[1:-1]))
 kaka = {"dssd": 1, "ooo": "dsa"}
 
 
-
+adadsasd
 response = False
 print("asdasdsadsaddsa")
 
