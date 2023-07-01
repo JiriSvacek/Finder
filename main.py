@@ -22,7 +22,7 @@ def sendRequest(url: str) -> bool or Exception:
     """Checks if input string is url and if we can ping it."""
     extension = ["jpg", "jpeg", "png", "gif"]
     try:
-        if "http" in url and any(ex in url for ex in extension):
+        if "http" in url or "https" in url and any(ex in url for ex in extension):
             page = requests.get(url, stream=True, timeout=1, headers={
                 "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
                               "Chrome/51.0.2704.103 Safari/537.36"})
