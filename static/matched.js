@@ -40,7 +40,7 @@ function newMessageMe(time, msg) {
   );
 }
 
-// Connects to socket.io chat and sets up event listener for incoming messages and redirect then draws last messages from every chat
+// Connects to socket.io chat and sets up event listener for incoming messages and then draws last messages from every chat
 window.onload = function () {
   const lis = document.getElementById("aside").getElementsByTagName("li");
   for (let element of lis) {
