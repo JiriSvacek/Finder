@@ -1,6 +1,6 @@
 # Finder
 ## Function
-For testing purposes only dating site. After user registration to the DB. Other users in defined circel around user are shown according to setting (age, sex, range). User can deside to swipe or match them. If both user are matched, then it is possible to chat online.
+For testing purposes only dating site. After user registration to the DB. Other users in defined circle around user are shown according to setting (age, sex, range). User can deside to swipe or match them. If both user are matched, then it is possible to chat online.
 
 __PLEASE TAKE NOTE:__ This app is only for learning purposes and could contain bugs. Also there is lot of possibilities to upgrade it!!
 
